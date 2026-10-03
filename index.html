@@ -3,23 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antigravity Playground 🚀</title>
+  <title>Antigravity Playground [Dev] 🚀</title>
   <style>
     :root {
-      --bg: #0f172a;
+      --bg: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
       --card-bg: rgba(30, 41, 59, 0.7);
+      --inner-card-bg: rgba(15, 23, 42, 0.6);
       --border: rgba(255, 255, 255, 0.1);
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --accent: #38bdf8;
       --text: #f8fafc;
       --text-muted: #94a3b8;
+      --item-bg: rgba(255, 255, 255, 0.05);
+      --item-hover: rgba(255, 255, 255, 0.09);
+    }
+
+    body.light-theme {
+      --bg: radial-gradient(circle at 50% 20%, #e0e7ff 0%, #f1f5f9 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --inner-card-bg: rgba(241, 245, 249, 0.8);
+      --border: rgba(0, 0, 0, 0.1);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --accent: #0284c7;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --item-bg: rgba(0, 0, 0, 0.04);
+      --item-hover: rgba(0, 0, 0, 0.08);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
     }
 
     body {
@@ -28,23 +46,30 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
+      background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Pretendard', sans-serif;
       color: var(--text);
-      padding: 20px;
+      padding: 30px 20px;
     }
 
     .container {
+      position: relative;
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 48px;
-      max-width: 540px;
+      padding: 40px;
+      max-width: 580px;
       width: 100%;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
     .badge {
@@ -58,7 +83,23 @@
       border-radius: 9999px;
       font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 20px;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-toggle:hover {
+      background: var(--item-hover);
     }
 
     .badge-dot {
@@ -76,42 +117,45 @@
     }
 
     h1 {
-      font-size: 2.25rem;
+      font-size: 2.2rem;
       font-weight: 800;
       line-height: 1.25;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+      margin-bottom: 8px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--text) 30%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
-    .interactive-card {
-      background: rgba(15, 23, 42, 0.6);
+    .section-card {
+      background: var(--inner-card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 28px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
 
     .counter-display {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 700;
       color: var(--accent);
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       font-variant-numeric: tabular-nums;
+      text-align: center;
     }
 
     .btn-group {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -119,21 +163,19 @@
       background: var(--primary);
       color: white;
       border: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 0.95rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     button:hover {
       background: var(--primary-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+      transform: translateY(-1px);
     }
 
     button:active {
@@ -147,57 +189,155 @@
     }
 
     button.btn-outline:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: none;
+      background: var(--item-hover);
     }
 
     .quote-box {
-      font-size: 0.95rem;
-      color: #cbd5e1;
+      font-size: 0.9rem;
+      color: var(--text);
+      opacity: 0.85;
       font-style: italic;
-      min-height: 48px;
+      min-height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 16px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.03);
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: var(--item-bg);
       border-radius: 8px;
+      text-align: center;
+    }
+
+    /* Todo List Widget */
+    .todo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .todo-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .todo-count-badge {
+      font-size: 0.75rem;
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    .todo-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--item-bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .todo-input:focus {
+      border-color: var(--accent);
+    }
+
+    .todo-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--item-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      gap: 10px;
+    }
+
+    .todo-item:hover {
+      background: var(--item-hover);
+    }
+
+    .todo-item.completed span {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .todo-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .todo-delete-btn {
+      background: transparent;
+      color: #f87171;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+    }
+
+    .todo-delete-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      transform: none;
     }
 
     footer {
-      margin-top: 24px;
-      font-size: 0.85rem;
+      margin-top: 18px;
+      font-size: 0.8rem;
       color: var(--text-muted);
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
     }
-
-    .vercel-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--text);
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
   <main class="container">
-    <div class="badge">
-      <div class="badge-dot"></div>
-      Vercel 배포 준비 완료
+    <div class="top-actions">
+      <div class="badge">
+        <div class="badge-dot"></div>
+        develop branch
+      </div>
+      <button id="themeToggleBtn" class="theme-toggle">
+        <span id="themeIcon">☀️</span>
+        <span id="themeText">라이트 모드</span>
+      </button>
     </div>
 
     <h1>Antigravity Playground</h1>
     <p class="subtitle">
-      클라우드에 즉시 배포 가능한 인터랙티브 모던 웹사이트입니다.
+      develop 브랜치 전용: Todo 위젯 & 테마 토글 기능 탑재
     </p>
 
-    <div class="interactive-card">
+    <!-- 인터랙티브 카운터 & 명언 섹션 -->
+    <div class="section-card">
       <div class="counter-display" id="counter">0</div>
       <div class="btn-group">
         <button id="incrementBtn">⚡ 클릭 카운트</button>
@@ -208,15 +348,29 @@
       </div>
     </div>
 
+    <!-- 신규 추가된 투두 & 아이디어 메모 위젯 -->
+    <div class="section-card">
+      <div class="todo-header">
+        <span class="todo-title">📝 개발 태스크 플래너</span>
+        <span class="todo-count-badge" id="todoCountBadge">0개</span>
+      </div>
+      <div class="todo-input-group">
+        <input type="text" id="todoInput" class="todo-input" placeholder="새로운 할 일 또는 아이디어를 적어보세요..." />
+        <button id="addTodoBtn">추가</button>
+      </div>
+      <ul class="todo-list" id="todoList"></ul>
+    </div>
+
     <footer>
       <span>배포 준비:</span>
-      <span class="vercel-badge">▲ Vercel Ready</span>
+      <strong>▲ Vercel Ready</strong>
       <span>•</span>
       <span id="currentTime"></span>
     </footer>
   </main>
 
   <script>
+    // 카운터 및 명언
     let count = 0;
     const counterEl = document.getElementById('counter');
     const incrementBtn = document.getElementById('incrementBtn');
@@ -227,8 +381,8 @@
     const quotes = [
       "상상하는 모든 소프트웨어가 현실이 됩니다.",
       "Vercel과 함께 전 세계 어디서든 초고속 로딩을 경험하세요.",
+      "develop 브랜치에서 새로운 아이디어를 마음껏 시험해보세요.",
       "작은 아이디어가 위대한 서비스를 만듭니다.",
-      "Antigravity와 함께 새로운 차원의 코딩을 시작해보세요!",
       "Simple is better than complex."
     ];
 
@@ -250,6 +404,106 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
+
+    // 테마 토글
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    let isLight = localStorage.getItem('theme') === 'light';
+    function applyTheme() {
+      if (isLight) {
+        document.body.classList.add('light-theme');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = '다크 모드';
+      } else {
+        document.body.classList.remove('light-theme');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = '라이트 모드';
+      }
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
+    applyTheme();
+
+    themeToggleBtn.addEventListener('click', () => {
+      isLight = !isLight;
+      applyTheme();
+    });
+
+    // Todo List 기능 (localStorage 연동)
+    const todoInput = document.getElementById('todoInput');
+    const addTodoBtn = document.getElementById('addTodoBtn');
+    const todoList = document.getElementById('todoList');
+    const todoCountBadge = document.getElementById('todoCountBadge');
+
+    let todos = JSON.parse(localStorage.getItem('dev_todos') || '[]');
+    if (todos.length === 0) {
+      todos = [
+        { id: 1, text: 'Vercel에 develop 브랜치 프리뷰 배포 연동', done: false },
+        { id: 2, text: '새로운 UI 컴포넌트 테스트하기', done: true }
+      ];
+    }
+
+    function saveAndRenderTodos() {
+      localStorage.setItem('dev_todos', JSON.stringify(todos));
+      todoList.innerHTML = '';
+      todos.forEach((todo) => {
+        const li = document.createElement('li');
+        li.className = `todo-item ${todo.done ? 'completed' : ''}`;
+
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'todo-left';
+        leftDiv.innerHTML = `
+          <input type="checkbox" ${todo.done ? 'checked' : ''} />
+          <span>${escapeHtml(todo.text)}</span>
+        `;
+        leftDiv.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'INPUT') {
+            todo.done = !todo.done;
+          } else {
+            todo.done = e.target.checked;
+          }
+          saveAndRenderTodos();
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'todo-delete-btn';
+        deleteBtn.textContent = '삭제';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          todos = todos.filter((t) => t.id !== todo.id);
+          saveAndRenderTodos();
+        });
+
+        li.appendChild(leftDiv);
+        li.appendChild(deleteBtn);
+        todoList.appendChild(li);
+      });
+
+      const remaining = todos.filter((t) => !t.done).length;
+      todoCountBadge.textContent = `${remaining}개 남음`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function addTodo() {
+      const val = todoInput.value.trim();
+      if (!val) return;
+      todos.unshift({ id: Date.now(), text: val, done: false });
+      todoInput.value = '';
+      saveAndRenderTodos();
+    }
+
+    addTodoBtn.addEventListener('click', addTodo);
+    todoInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTodo();
+    });
+
+    saveAndRenderTodos();
   </script>
 </body>
 </html>
