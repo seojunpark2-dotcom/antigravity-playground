@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Antigravity Playground 🚀</title>
+  <title>Antigravity Playground [Feature: Focus Timer] ⏱️</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.7);
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --inner-card-bg: rgba(15, 23, 42, 0.65);
+      --border: rgba(255, 255, 255, 0.12);
       --primary: #6366f1;
       --primary-hover: #4f46e5;
       --accent: #38bdf8;
+      --timer-focus: #f43f5e;
+      --timer-break: #10b981;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -28,10 +31,10 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
+      background: var(--bg);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Pretendard', sans-serif;
       color: var(--text);
-      padding: 20px;
+      padding: 30px 20px;
     }
 
     .container {
@@ -40,8 +43,8 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 48px;
-      max-width: 540px;
+      padding: 40px;
+      max-width: 560px;
       width: 100%;
       text-align: center;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -58,15 +61,15 @@
       border-radius: 9999px;
       font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .badge-dot {
       width: 8px;
       height: 8px;
-      background: #10b981;
+      background: #f43f5e;
       border-radius: 50%;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 8px #f43f5e;
       animation: pulse 2s infinite;
     }
 
@@ -76,10 +79,10 @@
     }
 
     h1 {
-      font-size: 2.25rem;
+      font-size: 2.2rem;
       font-weight: 800;
       line-height: 1.25;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -87,39 +90,88 @@
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
-    .interactive-card {
-      background: rgba(15, 23, 42, 0.6);
+    .section-card {
+      background: var(--inner-card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 24px;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
 
-    .counter-display {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: 16px;
+    /* Pomodoro Timer Widget */
+    .timer-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .timer-tab {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .timer-tab.active {
+      background: var(--timer-focus);
+      color: white;
+      border-color: var(--timer-focus);
+      box-shadow: 0 4px 14px rgba(244, 63, 94, 0.4);
+    }
+
+    .timer-tab.active.break-mode {
+      background: var(--timer-break);
+      border-color: var(--timer-break);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .timer-time {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: -1px;
       font-variant-numeric: tabular-nums;
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
 
-    .btn-group {
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--timer-focus);
+      transition: width 0.3s linear, background-color 0.3s ease;
+    }
+
+    .timer-controls {
       display: flex;
       justify-content: center;
       gap: 12px;
-      flex-wrap: wrap;
     }
 
     button {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 12px;
       font-size: 0.95rem;
       font-weight: 600;
@@ -127,13 +179,12 @@
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     button:hover {
       background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
     }
 
     button:active {
@@ -148,40 +199,40 @@
 
     button.btn-outline:hover {
       background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: none;
     }
 
+    .pomodoro-stats {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .pomodoro-stats strong {
+      color: #fbbf24;
+    }
+
+    /* 하단 명언 박스 */
     .quote-box {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #cbd5e1;
       font-style: italic;
-      min-height: 48px;
+      min-height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 16px;
-      padding: 12px;
+      padding: 8px 12px;
       background: rgba(255, 255, 255, 0.03);
       border-radius: 8px;
     }
 
     footer {
-      margin-top: 24px;
-      font-size: 0.85rem;
+      margin-top: 18px;
+      font-size: 0.8rem;
       color: var(--text-muted);
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
-    }
-
-    .vercel-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--text);
-      font-weight: 600;
     }
   </style>
 </head>
@@ -189,59 +240,184 @@
   <main class="container">
     <div class="badge">
       <div class="badge-dot"></div>
-      Vercel 배포 준비 완료
+      feature/ui-enhancements branch
     </div>
 
     <h1>Antigravity Playground</h1>
     <p class="subtitle">
-      클라우드에 즉시 배포 가능한 인터랙티브 모던 웹사이트입니다.
+      feature 전용 신기능: 인터랙티브 뽀모도로 포커스 타이머 ⏱️
     </p>
 
-    <div class="interactive-card">
-      <div class="counter-display" id="counter">0</div>
-      <div class="btn-group">
-        <button id="incrementBtn">⚡ 클릭 카운트</button>
-        <button id="quoteBtn" class="btn-outline">✨ 메시지 뽑기</button>
+    <!-- 뽀모도로 포커스 타이머 위젯 -->
+    <div class="section-card">
+      <div class="timer-tabs">
+        <button class="timer-tab active" id="tabFocus" data-mode="focus">🍅 집중 (25분)</button>
+        <button class="timer-tab" id="tabBreak" data-mode="break">☕ 휴식 (5분)</button>
       </div>
+
+      <div class="timer-time" id="timerDisplay">25:00</div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="timer-controls">
+        <button id="startBtn">▶ 시작</button>
+        <button id="resetBtn" class="btn-outline">↺ 리셋</button>
+      </div>
+
+      <div class="pomodoro-stats">
+        완료한 집중 세션: <strong id="sessionCount">0</strong>개 🍅
+      </div>
+    </div>
+
+    <!-- 명언 위젯 -->
+    <div class="section-card" style="margin-bottom: 0;">
       <div class="quote-box" id="quoteText">
-        "상상하는 모든 소프트웨어가 현실이 됩니다."
+        "몰입의 힘은 생각보다 강력합니다. 타이머를 켜고 시작해보세요!"
+      </div>
+      <div style="margin-top: 10px;">
+        <button id="quoteBtn" class="btn-outline" style="font-size: 0.85rem; padding: 6px 14px;">✨ 새 메시지</button>
       </div>
     </div>
 
     <footer>
       <span>배포 준비:</span>
-      <span class="vercel-badge">▲ Vercel Ready</span>
+      <strong>▲ Vercel Ready</strong>
       <span>•</span>
       <span id="currentTime"></span>
     </footer>
   </main>
 
   <script>
-    let count = 0;
-    const counterEl = document.getElementById('counter');
-    const incrementBtn = document.getElementById('incrementBtn');
+    // Web Audio API 비프음 생성기
+    function playChime() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      } catch (e) {
+        console.log('Audio notification played');
+      }
+    }
+
+    // 타이머 로직
+    const FOCUS_TIME = 25 * 60;
+    const BREAK_TIME = 5 * 60;
+
+    let currentMode = 'focus';
+    let totalSeconds = FOCUS_TIME;
+    let remainingSeconds = FOCUS_TIME;
+    let timerInterval = null;
+    let completedSessions = 0;
+
+    const timerDisplay = document.getElementById('timerDisplay');
+    const progressBar = document.getElementById('progressBar');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const tabFocus = document.getElementById('tabFocus');
+    const tabBreak = document.getElementById('tabBreak');
+    const sessionCount = document.getElementById('sessionCount');
+
+    function updateDisplay() {
+      const mins = Math.floor(remainingSeconds / 60);
+      const secs = remainingSeconds % 60;
+      timerDisplay.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      const progressPercent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+    }
+
+    function switchMode(mode) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      startBtn.textContent = '▶ 시작';
+      currentMode = mode;
+
+      if (mode === 'focus') {
+        totalSeconds = FOCUS_TIME;
+        tabFocus.classList.add('active');
+        tabFocus.classList.remove('break-mode');
+        tabBreak.classList.remove('active', 'break-mode');
+        progressBar.style.backgroundColor = 'var(--timer-focus)';
+      } else {
+        totalSeconds = BREAK_TIME;
+        tabBreak.classList.add('active', 'break-mode');
+        tabFocus.classList.remove('active', 'break-mode');
+        progressBar.style.backgroundColor = 'var(--timer-break)';
+      }
+      remainingSeconds = totalSeconds;
+      updateDisplay();
+    }
+
+    tabFocus.addEventListener('click', () => switchMode('focus'));
+    tabBreak.addEventListener('click', () => switchMode('break'));
+
+    startBtn.addEventListener('click', () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startBtn.textContent = '▶ 계속';
+      } else {
+        startBtn.textContent = '⏸ 일시정지';
+        timerInterval = setInterval(() => {
+          if (remainingSeconds > 0) {
+            remainingSeconds--;
+            updateDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            playChime();
+            if (currentMode === 'focus') {
+              completedSessions++;
+              sessionCount.textContent = completedSessions;
+              alert('🎉 25분 집중 세션 완료! 5분간 휴식을 취해보세요.');
+              switchMode('break');
+            } else {
+              alert('☕ 휴식 종료! 다시 집중할 준비가 되셨나요?');
+              switchMode('focus');
+            }
+          }
+        }, 1000);
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      startBtn.textContent = '▶ 시작';
+      remainingSeconds = totalSeconds;
+      updateDisplay();
+    });
+
+    // 명언 & 시계
     const quoteBtn = document.getElementById('quoteBtn');
     const quoteText = document.getElementById('quoteText');
     const timeEl = document.getElementById('currentTime');
 
     const quotes = [
-      "상상하는 모든 소프트웨어가 현실이 됩니다.",
-      "Vercel과 함께 전 세계 어디서든 초고속 로딩을 경험하세요.",
-      "작은 아이디어가 위대한 서비스를 만듭니다.",
-      "Antigravity와 함께 새로운 차원의 코딩을 시작해보세요!",
-      "Simple is better than complex."
+      "몰입의 힘은 생각보다 강력합니다. 타이머를 켜고 시작해보세요!",
+      "오늘 25분의 집중이 내일의 완성도를 결정합니다.",
+      "작은 휴식이 더 깊은 몰입을 만듭니다.",
+      "Vercel의 빠른 속도처럼 내 작업 속도도 가속됩니다.",
+      "Done is better than perfect."
     ];
 
-    incrementBtn.addEventListener('click', () => {
-      count++;
-      counterEl.textContent = count;
-      counterEl.style.transform = 'scale(1.15)';
-      setTimeout(() => counterEl.style.transform = 'scale(1)', 150);
-    });
-
     quoteBtn.addEventListener('click', () => {
-      const randomIndex = Math.floor(Math.random() * quotes.length);
-      quoteText.textContent = `"${quotes[randomIndex]}"`;
+      const idx = Math.floor(Math.random() * quotes.length);
+      quoteText.textContent = `"${quotes[idx]}"`;
     });
 
     function updateTime() {
@@ -250,6 +426,7 @@
     }
     updateTime();
     setInterval(updateTime, 1000);
+    updateDisplay();
   </script>
 </body>
 </html>
