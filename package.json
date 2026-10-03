@@ -1,0 +1,12 @@
+{
+  "name": "antigravity-playground",
+  "version": "1.0.0",
+  "description": "A modern interactive web project ready for Vercel deployment",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["antigravity", "vercel", "html5"],
+  "author": "seojunpark2-dotcom",
+  "license": "MIT"
+}
