@@ -4,9 +4,7 @@ const path = require('node:path');
 const PORT = Number(process.env.PORT || 3000);
 const files = {
   '/': ['index.html', 'text/html; charset=utf-8'],
-  '/index.html': ['index.html', 'text/html; charset=utf-8'],
-  '/auth.js': ['auth.js', 'text/javascript; charset=utf-8'],
-  '/auth.css': ['auth.css', 'text/css; charset=utf-8']
+  '/index.html': ['index.html', 'text/html; charset=utf-8']
 };
 http.createServer((req, res) => {
   const file = files[new URL(req.url, 'http://localhost').pathname];

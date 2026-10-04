@@ -3,6 +3,10 @@ export async function mountAuth(auth, doc, win) {
   let mode = 'login';
   let busy = false;
   let revision = 0;
+  // file:// has no HTTP origin. Let Supabase use its configured Site URL
+  // for confirmation emails instead of sending an invalid "null/" redirect.
+  const redirectOptions = /^https?:$/.test(win.location.protocol)
+    ? { emailRedirectTo: win.location.origin + '/' } : {};
   const feedback = (message, error = false) => {
     el('authFeedback').textContent = message;
     el('authFeedback').dataset.error = String(error);
@@ -83,7 +87,7 @@ export async function mountAuth(auth, doc, win) {
     feedback('처리 중입니다…');
     try {
       const result = mode === 'signup'
-        ? await auth.signUp({ email, password, options: { emailRedirectTo: win.location.origin + '/' } })
+        ? await auth.signUp({ email, password, options: redirectOptions })
         : await auth.signInWithPassword({ email, password });
       if (result.error) {
         feedback(errorText(result.error), true);
@@ -126,12 +130,14 @@ export async function mountAuth(auth, doc, win) {
     try {
       const { error } = await auth.resend({
         type: 'signup', email: el('authEmail').value.trim(),
-        options: { emailRedirectTo: win.location.origin + '/' }
+        options: redirectOptions
       });
       feedback(error ? errorText(error) : '가입 가능한 주소라면 인증 메일을 다시 보냈습니다. 받은 메일과 스팸함을 확인해주세요.', !!error);
     } catch { feedback('메일을 요청하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.', true); }
     finally { busy = false; el('authFields').disabled = false; el('closeAuth').disabled = false; }
   });
+  // Opening a form must never depend on the network or session restoration.
+  render(null);
   auth.onAuthStateChange((event, session) => {
     revision++;
     render(session);

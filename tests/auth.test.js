@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const { JSDOM } = require('jsdom');
 const { readFileSync } = require('node:fs');
 const { pathToFileURL } = require('node:url');
-async function setup(overrides = {}, hash = '') {
-  const dom = new JSDOM(readFileSync('index.html', 'utf8'), { url: 'http://localhost:3000/' + hash });
+async function setup(overrides = {}, hash = '', url = 'http://localhost:3000/') {
+  const dom = new JSDOM(readFileSync('src/page.html', 'utf8'), { url: url + hash });
   const doc = dom.window.document;
   const dialog = doc.getElementById('authDialog');
   dialog.showModal = () => { dialog.open = true; };
@@ -95,4 +95,28 @@ test('confirmation resend handles provider limits and restores controls', async 
   assert.equal(call.email, 'member@example.com');
   assert.match(s.el('authFeedback').textContent, /잠시 후/);
   assert.equal(s.el('authFields').disabled, false);
+});
+test('opening forms does not wait for a stalled session lookup', async () => {
+  let resolve;
+  const sessionLookup = new Promise((r) => { resolve = r; });
+  const dom = new JSDOM(readFileSync('src/page.html', 'utf8'), { url: 'http://localhost:3000' });
+  const doc = dom.window.document;
+  const dialog = doc.getElementById('authDialog');
+  dialog.showModal = () => { dialog.open = true; };
+  const { mountAuth } = await import(pathToFileURL(process.cwd() + '/src/auth-ui.js').href);
+  const mounting = mountAuth({ onAuthStateChange() {}, getSession: () => sessionLookup }, doc, dom.window);
+  doc.getElementById('openLogin').click();
+  assert.equal(dialog.open, true);
+  assert.equal(doc.getElementById('authTitle').textContent, '로그인');
+  doc.getElementById('openSignup').click();
+  assert.equal(doc.getElementById('authTitle').textContent, '회원가입');
+  resolve({ data: { session: null } });
+  await mounting;
+});
+test('file previews never send a null origin as an email redirect', async () => {
+  const s = await setup({}, '', 'file:///C:/preview/index.html');
+  s.el('openSignup').click(); s.fill();
+  s.el('authConfirm').value = 'strong-password'; await s.submit();
+  assert.equal('emailRedirectTo' in s.calls[0].options, false);
+  assert.match(s.el('authFeedback').textContent, /인증 메일/);
 });

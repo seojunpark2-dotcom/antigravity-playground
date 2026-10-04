@@ -9,7 +9,10 @@ npm ci
 npm start
 ```
 http://localhost:3000 에 접속하세요. 빌드 결과는 dist/에 생성됩니다.
-index.html을 파일로 직접 열면 인증 번들이 없어 로그인할 수 없습니다.
+저장소의 index.html은 인증 코드와 스타일이 포함된 독립 실행 HTML입니다. 더블클릭해도 로그인·회원가입 화면을 열 수 있습니다. 실제 인증 요청에는 인터넷 연결이 필요합니다.
+파일 미리보기에서는 이메일 인증 후 로그인 화면으로 돌아와 로그인하세요. 인증 링크의 복귀 주소는 Supabase의 기존 Site URL을 사용합니다.
+
+개발할 때는 src/page.html, src/auth-ui.js, src/auth.js, auth.css를 수정하고 npm run build를 실행하세요. 루트 index.html과 dist/index.html이 같은 내용으로 생성됩니다. 생성된 루트 index.html도 저장소에 포함해 빌드하지 않은 파일 미리보기를 지원합니다.
 
 ## 로그인과 회원가입
 - Supabase `test` 프로젝트의 이메일·비밀번호 인증을 사용합니다.
