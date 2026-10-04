@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antigravity Playground [Integrated] 🚀</title>
+  <link rel="stylesheet" href="/auth.css" />
+  <script src="/auth.js" defer></script>
   <style>
     :root {
       --bg: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0f172a 100%);
@@ -403,6 +405,48 @@
     <p class="subtitle">
       develop & feature 브랜치의 모든 기능이 병합된 최종 웹사이트입니다.
     </p>
+
+    <section class="section-card account-card" aria-labelledby="accountTitle">
+      <div class="section-header">
+        <h2 id="accountTitle">내 계정</h2>
+        <span id="accountStatus" class="account-status">확인 중</span>
+      </div>
+      <p id="accountMessage" class="account-message" role="status" aria-live="polite">로그인 상태를 확인하고 있습니다.</p>
+      <div id="guestActions" hidden class="btn-group">
+        <button id="openLogin" type="button" disabled>로그인</button>
+        <button id="openSignup" type="button" class="btn-outline" disabled>회원가입</button>
+      </div>
+      <div id="memberActions" hidden class="member-actions">
+        <p id="memberEmail"></p>
+        <button id="logout" type="button" class="btn-outline">로그아웃</button>
+      </div>
+      <noscript>로그인과 회원가입을 사용하려면 JavaScript를 활성화해주세요.</noscript>
+    </section>
+
+    <dialog id="authDialog" aria-labelledby="authTitle">
+      <div class="auth-heading">
+        <h2 id="authTitle">로그인</h2>
+        <button id="closeAuth" type="button" class="btn-outline" aria-label="닫기">✕</button>
+      </div>
+      <p id="authDescription" class="account-message">이메일과 비밀번호로 로그인하세요.</p>
+      <form id="authForm">
+        <fieldset id="authFields">
+          <label for="authEmail">이메일</label>
+          <input id="authEmail" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" />
+          <label for="authPassword">비밀번호</label>
+          <input id="authPassword" name="password" type="password" autocomplete="current-password" required maxlength="128" />
+          <div id="confirmField" hidden>
+            <label for="authConfirm">비밀번호 확인</label>
+            <input id="authConfirm" name="confirm" type="password" autocomplete="new-password" maxlength="128" />
+          </div>
+          <p id="passwordHint" class="account-message" hidden>비밀번호는 8자 이상으로 입력하세요.</p>
+          <p id="authFeedback" role="status" aria-live="polite"></p>
+          <button id="authSubmit" type="submit">로그인</button>
+          <button id="switchAuth" type="button" class="btn-outline">계정이 없으신가요? 회원가입</button>
+          <button id="resendConfirmation" type="button" class="btn-outline" hidden>인증 메일 다시 받기</button>
+        </fieldset>
+      </form>
+    </dialog>
 
     <!-- 1. 뽀모도로 포커스 타이머 (from feature/ui-enhancements) -->
     <div class="section-card">

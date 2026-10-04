@@ -1,22 +1,21 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-
-const PORT = 3000;
-const HTML_FILE = path.join(__dirname, 'index.html');
-
-const server = http.createServer((req, res) => {
-  fs.readFile(HTML_FILE, (err, data) => {
-    if (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('서버 에러가 발생했습니다.');
-      return;
-    }
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(data);
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+const PORT = Number(process.env.PORT || 3000);
+const files = {
+  '/': ['index.html', 'text/html; charset=utf-8'],
+  '/index.html': ['index.html', 'text/html; charset=utf-8'],
+  '/auth.js': ['auth.js', 'text/javascript; charset=utf-8'],
+  '/auth.css': ['auth.css', 'text/css; charset=utf-8']
+};
+http.createServer((req, res) => {
+  const file = files[new URL(req.url, 'http://localhost').pathname];
+  if (!file || !['GET', 'HEAD'].includes(req.method)) {
+    res.writeHead(404); res.end('Not found'); return;
+  }
+  fs.readFile(path.join(__dirname, 'dist', file[0]), (error, data) => {
+    if (error) { res.writeHead(500); res.end('Run npm run build first.'); return; }
+    res.writeHead(200, { 'Content-Type': file[1], 'X-Content-Type-Options': 'nosniff' });
+    res.end(req.method === 'HEAD' ? undefined : data);
   });
-});
-
-server.listen(PORT, () => {
-  console.log(`서버가 실행되었습니다: http://localhost:${PORT}`);
-});
+}).listen(PORT, '127.0.0.1', () => console.log('http://localhost:' + PORT));
